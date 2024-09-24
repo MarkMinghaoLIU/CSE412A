@@ -99,48 +99,10 @@ def depthFirstSearch(problem):
     """
 
     "*** YOUR CODE HERE ***"
-    frontier = util.Stack()
-    frontier.push(Node(problem.getStartState(), None, None))
-    expanded = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.state):
-            actions = list()
-            while node.action is not None:
-                actions.append(node.action)
-                node = node.prev
-            actions.reverse()
-            return actions
-        
-        if node.state not in expanded:
-            expanded.add(node.state)
-            for child in problem.getSuccessors(node.state):
-                frontier.push(Node(child[0], node, child[1]))
-
-    return list()    
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    frontier = util.Queue()
-    frontier.push(Node(problem.getStartState(), None, None))
-    expanded = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.state):
-            actions = list()
-            while node.action is not None:
-                actions.append(node.action)
-                node = node.prev
-            actions.reverse()
-            return actions
-        
-        if node.state not in expanded:
-            expanded.add(node.state)
-            for child in problem.getSuccessors(node.state):
-                frontier.push(Node(child[0], node, child[1]))
-
-    return list() 
 
 
     
@@ -148,25 +110,7 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    frontier = util.PriorityQueue()
-    frontier.push(Node(problem.getStartState(), None, None), 0)
-    expanded = set()
-    while not frontier.isEmpty():
-        node = frontier.pop()
-        if problem.isGoalState(node.state):
-            actions = list()
-            while node.action is not None:
-                actions.append(node.action)
-                node = node.prev
-            actions.reverse()
-            return actions
-        
-        if node.state not in expanded:
-            expanded.add(node.state)
-            for child in problem.getSuccessors(node.state):
-                frontier.push(Node(child[0], node, child[1], child[2]+node.priority), child[2]+node.priority)
 
-    return list() 
 
 def nullHeuristic(state, problem=None):
     """
