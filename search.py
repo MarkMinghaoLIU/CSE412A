@@ -99,17 +99,66 @@ def depthFirstSearch(problem):
     """
 
     "*** YOUR CODE HERE ***"
+    stack = util.Stack()  
+    visited = set()       
+
+    start_state = problem.getStartState()
+    stack.push((start_state, []))  
+    while not stack.isEmpty():
+        current_state, actions = stack.pop()  
+
+        if problem.isGoalState(current_state):
+            return actions  
+
+        if current_state not in visited:
+            visited.add(current_state)  
+            for successor, action, _ in problem.getSuccessors(current_state):
+                stack.push((successor, actions + [action])) 
+    return []  
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    from util import Queue  # Make sure to import the Queue
+    queue = Queue()  # Initialize a queue for BFS
+    visited = set()  # Set to track visited states
+    start_state = problem.getStartState()
+    queue.push((start_state, []))
+    while not queue.isEmpty():
+        current_state, actions = queue.pop()  
 
+        if problem.isGoalState(current_state):
+            return actions  
+
+        if current_state not in visited:
+            visited.add(current_state) 
+            for successor, action, _ in problem.getSuccessors(current_state):
+                queue.push((successor, actions + [action]))  
+
+    return []  
 
     
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    from util import PriorityQueue  
+    pq = PriorityQueue()  
+    visited = set()  
+    start_state = problem.getStartState()
+    pq.push((start_state, [], 0), 0) 
+
+    while not pq.isEmpty():
+        current_state, actions, current_cost = pq.pop()  
+        if problem.isGoalState(current_state):
+            return actions  
+        if current_state not in visited:
+            visited.add(current_state)  
+            for successor, action, step_cost in problem.getSuccessors(current_state):
+                new_cost = current_cost + step_cost  
+                pq.push((successor, actions + [action], new_cost), new_cost)  
+
+    return []  
 
 
 def nullHeuristic(state, problem=None):
