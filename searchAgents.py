@@ -500,7 +500,16 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        cost = float('inf')
+        best = []
+        for i in range(food.width):
+            for j in range(food.height):
+                if food[i][j]:
+                    path = search.bfs(problem)
+                    if len(path)<cost:
+                        best = path
+                        cost = len(path)
+        return best
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
