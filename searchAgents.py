@@ -437,6 +437,14 @@ class AStarFoodSearchAgent(SearchAgent):
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
+class ExtraState:
+    def __init__(self, state, walls):
+        self.state = state
+        self.walls = walls
+    def getWalls(self):
+        return self.walls
+    def getPacmanPosition(self):
+        return self.state[0]
 
 def foodHeuristic(state, problem):
     """
@@ -468,7 +476,12 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    h_value = 0
+    for i in range(foodGrid.width):
+        for j in range(foodGrid.height):
+            if foodGrid[i][j]:
+                h_value = max(h_value, mazeDistance((i, j), position, ExtraState(state, problem.walls)))
+    return h_value
 
 
 class ClosestDotSearchAgent(SearchAgent):
