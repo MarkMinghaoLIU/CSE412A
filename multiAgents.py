@@ -152,8 +152,57 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"
-       
+        _, bestAction = self.minimax(0, 0, gameState)
+        return bestAction
+
+    def minimax(self, agentIndex, depth, gameState):
+        if depth == self.depth or gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState), Directions.STOP
+
+        if agentIndex == 0:  
+            return self.max_value(agentIndex, depth, gameState)
+        else:  
+            return self.min_value(agentIndex, depth, gameState)
+
+    def max_value(self, agentIndex, depth, gameState):
+        actions = gameState.getLegalActions(agentIndex)
+        if not actions:
+            return self.evaluationFunction(gameState), Directions.STOP
+        
+        bestScore = float('-inf')
+        bestAction = Directions.STOP
+        for action in actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            score, _ = self.minimax(1, depth, successor)  
+            if score > bestScore:
+                bestScore = score
+                bestAction = action
+
+        return bestScore, bestAction
+
+    def min_value(self, agentIndex, depth, gameState):
+        actions = gameState.getLegalActions(agentIndex)
+        if not actions:  
+            return self.evaluationFunction(gameState), Directions.STOP
+        
+        bestScore = float('inf')
+        bestAction = Directions.STOP
+        numAgents = gameState.getNumAgents()
+        nextAgent = (agentIndex + 1) % numAgents
+        if nextAgent == 0:
+            nextDepth = depth + 1
+        else:
+            nextDepth = depth
+
+        for action in actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            score, _ = self.minimax(nextAgent, nextDepth, successor)
+            if score < bestScore:
+                bestScore = score
+                bestAction = action
+
+        return bestScore, bestAction
+
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -163,10 +212,62 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def getAction(self, gameState):
         """
-        Returns the minimax action using self.depth and self.evaluationFunction
+        Returns the alpha-beta action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-       
+        _, bestAction = self.alphabeta(gameState, agentIndex=0, depth=self.depth, alpha=float('-inf'), beta=float('inf'))
+        return bestAction
+    
+    def alphabeta(self, gameState, agentIndex, depth, alpha, beta):
+        if depth == 0 or gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState), Directions.STOP
+        
+        if agentIndex == 0:
+            return self.max_value(gameState, agentIndex, depth, alpha, beta)
+        else:
+            return self.min_value(gameState, agentIndex, depth, alpha, beta)
+        
+    def max_value(self, gameState, agentIndex, depth, alpha, beta):
+        actions = gameState.getLegalActions(agentIndex)
+        if not actions:
+            return self.evaluationFunction(gameState), Directions.STOP
+        
+        bestScore = float('-inf')
+        bestAction = Directions.STOP
+        for action in actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            score, _ = self.alphabeta(successor, 1, depth, alpha, beta)
+            if score > bestScore:
+                bestScore = score
+                bestAction = action
+
+            alpha = max(alpha, bestScore)
+            if alpha > beta:  
+                break
+
+        return bestScore, bestAction
+
+    def min_value(self, gameState, agentIndex, depth, alpha, beta):
+        actions = gameState.getLegalActions(agentIndex)
+        if not actions:
+            return self.evaluationFunction(gameState), Directions.STOP
+
+        bestScore = float('inf')
+        bestAction = Directions.STOP
+        nextAgent = (agentIndex + 1) % gameState.getNumAgents()
+        nextDepth = depth - 1 if nextAgent == 0 else depth
+        for action in actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            score, _ = self.alphabeta(successor, nextAgent, nextDepth, alpha, beta)
+            if bestScore > score:
+                bestScore = score
+                bestAction = action
+            beta = min(beta, bestScore)
+            if alpha > beta: 
+                break
+
+        return bestScore, bestAction
+
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
